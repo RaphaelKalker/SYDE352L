@@ -1,52 +1,55 @@
 function main()
     clear all; clc; close all;
-
-    Tfs = calcTF();
-    TF1 = Tfs(1);
-    TF2 = Tfs(2);
     
-    %Get Poles,Zeroes, Root Loci
-    rootloci(TF1);
-    rootloci(TF2);
+    kp = .8; %step 3
+    kd = .014; % step 3
+    Tfs = calcTF(kp, kd);
+    TF1_A = Tfs(1);
+    TF2_A = Tfs(2);
+    
+    kp = .21; %step 5
+    kd = .042; %step 5
+    Tfs = calcTF(kp, kd);
+    TF1_B = Tfs(1);
+    TF2_B = Tfs(2);
 
+    %Get Poles, Zeroes, Root Loci
+    rootloci(TF1_A);
+    rootloci(TF2_A);
+    rootloci(TF1_B);
+    rootloci(TF2_B);
 end
-
-
-%Simplify that nasty beast
-% pretty(simplify(N1/Ds))
-% pretty(simplify(N2/Ds))
-% pretty(vpa(simplify(TF_x1)))
-% pretty(simplify(TF_x2))
 
 function TransferFunctions = calcTF(varargin)
-
-if nargin < 1
-    kp = .8; %step 3
-    kd = .014 %step 3
-else
-    ratio = varagin{1} % kd/kp
-end
+    %nargin = 2 - kp,kd given
+    %nargin = 1 - ratio
+    
+    if nargin == 2
+        kp = varargin{1};
+        kd = varargin{2};
+        
+    else
+        %ratio
+    end
+        
     s = tf('s');
 
-khw = 13803; %from parameters reference
-m1 = 522.2 + 492.5 + 492.8 + 494.7;
-m1 = m1/1000;
-m2 = 490.9 + 494.9 + 496.0 + 245.0;
-m2 = m2/1000;
-k2 = 426.2150; %from parameters reference
+    khw = 13803; %from parameters reference
+    m1 = 522.2 + 492.5 + 492.8 + 494.7;
+    m1 = m1/1000;
+    m2 = 490.9 + 494.9 + 496.0 + 245.0;
+    m2 = m2/1000;
+    k2 = 426.2150; %from parameters reference
 
-% Ds =(m1*m2)*s^4 + (m1*c2 + m2*c1)*s^3 + (m1*(k2+k3) + m2*(k1+k2) +c1*c2)*s^2 + (c1*(k2 + k3)+c2*(k1+k2))*s + (k1*k2 + k1*k3 + k2*k3); %correct
-Ds =(m1*m2)*s^4 + (m1*(k2) + m2*(k2))*s^2; %correct
-% N1 = m2*s^2 + c2*s + k2 +k3; %correct
-N1 = m2*s^2 + k2; %correct
-N2 = k2; %correct
-G1 = (kp + kd*s)*khw * N1/Ds;
-G2 = (kp + kd*s)*khw * N2/Ds;
-TF1 = G1/(1+G1)
-TF2 = G2/(1+G2)
+    Ds =(m1*m2)*s^4 + (m1*(k2) + m2*(k2))*s^2;
+    N1 = m2*s^2 + k2;
+    N2 = k2;
+    G1 = (kp + kd*s)*khw * N1/Ds;
+    G2 = (kp + kd*s)*khw * N2/Ds;
+    TF1 = G1/(1+G1)
+    TF2 = G2/(1+G2)
 
-TransferFunctions = [TF1 TF2];
-
+    TransferFunctions = [TF1 TF2];
 end
 
 function plot = rootloci(TF)
@@ -59,9 +62,3 @@ function plot = rootloci(TF)
     p.Title.String = 'My Title \frac{A-A(-1)}{Y}  (\it{\frac{x}})';
     setoptions(h,p);
 end
-
-
-
-
-
-
