@@ -84,12 +84,9 @@ end
 
 
 function plot = rootloci(TF, nr)
-
     [p,z] = pzmap(TF)
-%     pzplot(TF)
     subplot(nr);
     h = rlocusplot(TF);
     p = getoptions(h);
-%     p.Title.String = 'My Title \frac{A-A(-1)}{Y}  (\it{\frac{x}})';
     setoptions(h,p);
 end
