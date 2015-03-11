@@ -6,21 +6,24 @@ function main()
     Tfs = calcTF(kp, kd);
     TF1_A = Tfs(1);
     TF2_A = Tfs(2);
-    [p1A, z1A] = pzmap(TF1_A)
-    [p2A, z2A] = pzmap(TF1_A)
     
     kp = .21; %step 5
     kd = .042; %step 5
     Tfs = calcTF(kp, kd);
     TF1_B = Tfs(1);
     TF2_B = Tfs(2);
-    [p1B, z1B] = pzmap(TF1_B)
-    [p2B, z1B] = pzmap(TF2_B)
 
+    %Get Poles, Zeroes, Root Loci
+%     rootloci(TF1_A);
+%     rootloci(TF2_A);
+%     rootloci(TF1_B);
+%     rootloci(TF2_B);
     nr = 220;
-    count = 0;
-
-    %Plot root loci according to ratios
+    count = 1;
+    %1 - 221
+    %2 - 222
+    %3 - 223
+    %4 - 224
     for ratio = [.05, 0.10, .17, .25]
         %step 3
         Tfs = calcTF(ratio);
@@ -28,14 +31,11 @@ function main()
         TF2_A = Tfs(2);
         
         %Get Poles, Zeroes, Root Loci
-        if count == 4
-           count = 0; 
-           figure;
-        end
-        count = count +1 ;
-        rootloci(TF1_A, nr + count);
-        count = count +1;
-        rootloci(TF2_A, nr + count);
+        
+        
+        rootloci(TF1_A, nr);
+        
+        rootloci(TF2_A);
     end
 end
 
@@ -74,7 +74,7 @@ end
 %     TransferFunctions = [G1 G2];
 % end
 
-function OpenLoopTransferFunctions = calcTF(varargin)
+function TransferFunctions = calcTF(varargin)
     %nargin = 2 - kp,kd given
     %nargin = 1 - ratio
     
@@ -94,6 +94,7 @@ function OpenLoopTransferFunctions = calcTF(varargin)
     if nargin == 2
         kp = varargin{1};
         kd = varargin{2};
+
         G1 = (kp + kd*s)*khw * N1/Ds;
         G2 = (kp + kd*s)*khw * N2/Ds;
     elseif nargin == 1
@@ -102,15 +103,15 @@ function OpenLoopTransferFunctions = calcTF(varargin)
         G2 = (1 + ratio*s)*khw * N2/Ds;
     end
         
-    OpenLoopTransferFunctions = [G1 G2];
+    TransferFunctions = [G1 G2];
 end
 
 
-function plot = rootloci(TF, nr)
-
+function plot = rootloci(TF)
+%     figure;
     [p,z] = pzmap(TF)
 %     pzplot(TF)
-    subplot(nr);
+    subplot(sp);
     h = rlocusplot(TF);
     p = getoptions(h);
 %     p.Title.String = 'My Title \frac{A-A(-1)}{Y}  (\it{\frac{x}})';
