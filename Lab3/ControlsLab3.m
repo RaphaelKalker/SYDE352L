@@ -18,6 +18,28 @@ function main()
     rootloci(TF2_A);
     rootloci(TF1_B);
     rootloci(TF2_B);
+    
+    for ratio = [.05, 0.10, .17, .25]
+        %step 3
+        kd = .014; % step 3
+        kp = inv(ratio)*kd;
+        Tfs = calcTF(kp, kd);
+        TF1_A = Tfs(1);
+        TF2_A = Tfs(2);
+
+        %step 5
+        kd = .042; %step 5
+        kp = inv(ratio)*kd;
+        Tfs = calcTF(kp, kd);
+        TF1_B = Tfs(1);
+        TF2_B = Tfs(2);
+
+        %Get Poles, Zeroes, Root Loci
+        rootloci(TF1_A);
+        rootloci(TF2_A);
+        rootloci(TF1_B);
+        rootloci(TF2_B);
+    end
 end
 
 function TransferFunctions = calcTF(varargin)
@@ -29,7 +51,11 @@ function TransferFunctions = calcTF(varargin)
         kd = varargin{2};
         
     else
+        if nargin == 1
+        ratio = varargin{1};
+        kp = ratio 
         %ratio
+        end
     end
         
     s = tf('s');
@@ -46,19 +72,19 @@ function TransferFunctions = calcTF(varargin)
     N2 = k2;
     G1 = (kp + kd*s)*khw * N1/Ds;
     G2 = (kp + kd*s)*khw * N2/Ds;
-    TF1 = G1/(1+G1)
-    TF2 = G2/(1+G2)
-
-    TransferFunctions = [TF1 TF2];
+    TF1 = G1/(1+G1);
+    TF2 = G2/(1+G2);
+    %changed
+    TransferFunctions = [G1 G2];
 end
 
 function plot = rootloci(TF)
-    figure;
+%     figure;
     [p,z] = pzmap(TF)
-    pzplot(TF)
+%     pzplot(TF)
     figure;
     h = rlocusplot(TF);
     p = getoptions(h);
-    p.Title.String = 'My Title \frac{A-A(-1)}{Y}  (\it{\frac{x}})';
+%     p.Title.String = 'My Title \frac{A-A(-1)}{Y}  (\it{\frac{x}})';
     setoptions(h,p);
 end
